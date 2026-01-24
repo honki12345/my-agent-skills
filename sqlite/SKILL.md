@@ -192,6 +192,125 @@ EXPLAIN QUERY PLAN SELECT * FROM users WHERE email = ?;
 
 ---
 
+## In-Memory Database
+
+### 생성 방법
+```
+:memory:           -- 기본 (연결별 독립)
+file::memory:      -- URI 방식
+file::memory:?cache=shared  -- 여러 연결이 공유
+```
+
+### 장점
+```
+- 디스크 I/O 없음 (빠름)
+- 연결 종료 시 자동 정리
+- 테스트 환경에 최적
+```
+
+### 테스트 환경 활용
+```typescript
+// Jest/Vitest 테스트
+{
+  type: 'sqlite',
+  database: ':memory:',
+  synchronize: true,  // 테스트에서만 true
+}
+```
+
+---
+
+## AUTOINCREMENT vs INTEGER PRIMARY KEY
+
+### 핵심 차이
+| 항목 | INTEGER PRIMARY KEY | + AUTOINCREMENT |
+|------|-------------------|-----------------|
+| ROWID 재사용 | ✅ 삭제된 ID 재사용 | ❌ 절대 재사용 안 함 |
+| 순서 보장 | ❌ 단조증가 아닐 수 있음 | ✅ 항상 단조증가 |
+| 성능 | 빠름 | 느림 (sqlite_sequence 관리) |
+
+### 권장사항
+```
+대부분의 경우: INTEGER PRIMARY KEY (기본값) 사용
+AUTOINCREMENT 필요한 경우:
+- 감사/로그 시스템 (ID 연속성 필수)
+- 법규 준수 요구사항
+- 삭제된 ID 재사용이 보안 문제일 때
+```
+
+### ORM에서
+```
+TypeORM/Prisma는 기본적으로 INTEGER PRIMARY KEY 사용
+AUTOINCREMENT가 필요하면 직접 SQL로 테이블 생성
+```
+
+---
+
+## Generated Columns (계산 컬럼)
+
+### 문법
+```sql
+CREATE TABLE users(
+  first_name TEXT,
+  last_name TEXT,
+  full_name TEXT AS (first_name || ' ' || last_name),        -- VIRTUAL
+  email_domain TEXT AS (substr(email, instr(email,'@')+1)) STORED
+);
+```
+
+### VIRTUAL vs STORED
+| 구분 | VIRTUAL | STORED |
+|------|---------|--------|
+| 계산 시점 | 읽을 때 | 저장할 때 |
+| 저장 공간 | 없음 | 있음 |
+| ALTER TABLE ADD | ✅ 가능 | ❌ 불가 |
+
+### 제한사항
+```
+- 서브쿼리 불가
+- 비결정 함수 불가 (random 등)
+- 최소 1개 일반 컬럼 필요
+- SQLite 3.31.0+ 필요
+```
+
+---
+
+## 멀티스레드 모드
+
+### 세 가지 모드
+| 모드 | 설명 | 웹서버 권장 |
+|------|------|-----------|
+| Single-thread | 단일 스레드만 안전 | ❌ |
+| Multi-thread | 각 스레드가 독립 연결 사용 | ⚠️ |
+| **Serialized** | 같은 연결 공유 가능 (기본값) | ✅ |
+
+### 웹서버/ORM 환경
+```
+기본값(Serialized) 사용 권장
+- 연결 풀 공유 가능
+- 뮤텍스로 자동 직렬화
+- 복잡한 스레드 관리 불필요
+```
+
+---
+
+## NULL 처리
+
+### SQLite의 NULL 특성
+```
+UNIQUE 제약: NULL 여러 개 허용 (각각 구분)
+SELECT DISTINCT: NULL은 하나로 취급
+산술 연산: NULL 포함 시 결과도 NULL
+```
+
+### 다른 DB와 차이
+```
+SQLite/Oracle/PostgreSQL: UNIQUE에서 NULL 구분 (여러 개 허용)
+MS-SQL/Informix: UNIQUE에서 NULL 하나만 허용
+```
+
+---
+
 ## TypeORM 연동
 
 ### DataSource 설정
@@ -241,10 +360,21 @@ public async up(queryRunner: QueryRunner): Promise<void> {
 
 ## 참조 링크
 
-- [Quirks](https://www.sqlite.org/quirks.html) - 함정과 주의사항
-- [Pragmas](https://www.sqlite.org/pragma.html) - 설정 옵션
-- [ALTER TABLE](https://www.sqlite.org/lang_altertable.html) - 스키마 변경
-- [WAL Mode](https://www.sqlite.org/wal.html) - 동시성 향상
-- [Locking](https://www.sqlite.org/lockingv3.html) - 락킹 메커니즘
-- [Limits](https://www.sqlite.org/limits.html) - 제한사항
-- [Query Optimizer](https://www.sqlite.org/optoverview.html) - 쿼리 최적화
+| 주제 | 링크 |
+|------|------|
+| Quirks (함정) | https://www.sqlite.org/quirks.html |
+| Pragmas (설정) | https://www.sqlite.org/pragma.html |
+| DataTypes | https://www.sqlite.org/datatype3.html |
+| ALTER TABLE | https://www.sqlite.org/lang_altertable.html |
+| Foreign Keys | https://www.sqlite.org/foreignkeys.html |
+| WAL Mode | https://www.sqlite.org/wal.html |
+| Locking | https://www.sqlite.org/lockingv3.html |
+| Limits | https://www.sqlite.org/limits.html |
+| Query Optimizer | https://www.sqlite.org/optoverview.html |
+| In-Memory DB | https://www.sqlite.org/inmemorydb.html |
+| AUTOINCREMENT | https://www.sqlite.org/autoinc.html |
+| Generated Columns | https://www.sqlite.org/gencol.html |
+| Multi-thread | https://www.sqlite.org/threadsafe.html |
+| NULL Handling | https://www.sqlite.org/nulls.html |
+| STRICT Tables | https://www.sqlite.org/stricttables.html |
+| Backup | https://www.sqlite.org/backup.html |

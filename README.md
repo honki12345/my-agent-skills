@@ -4,11 +4,11 @@
 
 ## 설치된 Skills
 
-| Skill | 설명 | 트리거 |
-|-------|------|--------|
-| `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 |
-| `vercel-react-best-practices` | React/Next.js 성능 최적화 (45개 규칙) | React/Next.js 코드 작성/리뷰 시 |
-| `web-design-guidelines` | UI 코드 접근성/UX 리뷰 | UI 리뷰 요청 시 |
+| Skill | 설명 | 트리거 | 생성일 |
+|-------|------|--------|--------|
+| `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 | 2026-01-24 |
+| `vercel-react-best-practices` | React/Next.js 성능 최적화 (45개 규칙) | React/Next.js 코드 작성/리뷰 시 | 2026-01-24 |
+| `web-design-guidelines` | UI 코드 접근성/UX 리뷰 | UI 리뷰 요청 시 | 2026-01-24 |
 
 ## 사용법
 
