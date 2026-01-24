@@ -36,6 +36,7 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-01-24 | `nestjs` | NestJS 프레임워크 가이드 (133개 공식 문서) |
 | 2026-01-24 | `sqlite` | SQLite ORM 사용자 가이드 |
 | 2026-01-24 | `vercel-react-best-practices` | Vercel React/Next.js 성능 최적화 |
 | 2026-01-24 | `web-design-guidelines` | Web Interface Guidelines UI 리뷰 |
@@ -61,6 +62,9 @@
 ~/.claude/skills/
 ├── CLAUDE.md               # 이 파일 (컨벤션 및 이력)
 ├── README.md               # Skills 목록 및 상세 설명
+├── nestjs/
+│   ├── SKILL.md            # NestJS skill (요약)
+│   └── docs/               # 133개의 공식 문서
 ├── sqlite/
 │   └── SKILL.md            # SQLite skill (필수)
 ├── vercel-react-best-practices/

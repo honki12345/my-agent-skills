@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `nestjs` | NestJS 프레임워크 가이드 (133개 문서) | NestJS 프로젝트, @nestjs 패키지 사용 시 | 2026-01-24 |
 | `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 | 2026-01-24 |
 | `vercel-react-best-practices` | React/Next.js 성능 최적화 (45개 규칙) | React/Next.js 코드 작성/리뷰 시 | 2026-01-24 |
 | `web-design-guidelines` | UI 코드 접근성/UX 리뷰 | UI 리뷰 요청 시 | 2026-01-24 |
@@ -79,4 +80,41 @@ UI 코드를 Web Interface Guidelines에 따라 리뷰하는 skill입니다.
 - 접근성 (Accessibility)
 - UX 패턴
 - 웹 인터페이스 가이드라인 준수
+
+---
+
+## NestJS Skill 상세
+
+NestJS 공식 문서 기반 개발 레퍼런스입니다. 133개의 문서를 포함합니다.
+
+### 문서 카테고리
+
+| 카테고리 | 문서 수 | 주요 내용 |
+|----------|--------|----------|
+| Overview | 11개 | Controllers, Providers, Modules, Guards, Pipes 등 |
+| Fundamentals | 12개 | DI, Dynamic Modules, Lifecycle, Testing 등 |
+| Techniques | 20개 | Configuration, Database, Validation, Caching 등 |
+| Security | 7개 | Authentication, Authorization, CORS 등 |
+| GraphQL | 18개 | Resolvers, Mutations, Subscriptions, Federation 등 |
+| WebSockets | 6개 | Gateways, Adapters 등 |
+| Microservices | 12개 | Redis, Kafka, RabbitMQ, gRPC 등 |
+| OpenAPI | 8개 | Swagger 문서화 |
+| CLI | 5개 | 프로젝트 생성, 워크스페이스 |
+| Recipes | 20개 | TypeORM, Prisma, Passport, Hot Reload 등 |
+| FAQ | 9개 | 일반적인 오류, 서버리스 등 |
+| 기타 | 8개 | 배포, 마이그레이션, Devtools |
+
+### 구조
+
+```
+nestjs/
+├── SKILL.md           # 요약 및 핵심 패턴
+└── docs/              # 133개의 상세 문서
+    ├── controllers.md
+    ├── fundamentals/
+    ├── techniques/
+    ├── security/
+    ├── graphql/
+    └── ...
+```
 
