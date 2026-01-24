@@ -4,7 +4,10 @@
 
 ## 설치된 Skills
 
-- (작업 중)
+| Skill | 설명 |
+|-------|------|
+| `vercel-react-best-practices` | React/Next.js 성능 최적화 가이드 (45개 규칙) |
+| `web-design-guidelines` | UI 코드 접근성/UX 리뷰 |
 
 ## 사용법
 
