@@ -36,6 +36,7 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-01-25 | `github-graphql` | GitHub GraphQL API 가이드 (7개 공식 문서) |
 | 2026-01-24 | `nestjs` | NestJS 프레임워크 가이드 (133개 공식 문서) |
 | 2026-01-24 | `sqlite` | SQLite ORM 사용자 가이드 |
 | 2026-01-24 | `vercel-react-best-practices` | Vercel React/Next.js 성능 최적화 |

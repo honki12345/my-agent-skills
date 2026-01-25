@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `github-graphql` | GitHub GraphQL API 가이드 (7개 문서) | GitHub API, GraphQL, contributionsCollection 키워드 | 2026-01-25 |
 | `nestjs` | NestJS 프레임워크 가이드 (133개 문서) | NestJS 프로젝트, @nestjs 패키지 사용 시 | 2026-01-24 |
 | `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 | 2026-01-24 |
 | `vercel-react-best-practices` | React/Next.js 성능 최적화 (45개 규칙) | React/Next.js 코드 작성/리뷰 시 | 2026-01-24 |
@@ -80,6 +81,34 @@ UI 코드를 Web Interface Guidelines에 따라 리뷰하는 skill입니다.
 - 접근성 (Accessibility)
 - UX 패턴
 - 웹 인터페이스 가이드라인 준수
+
+---
+
+## GitHub GraphQL Skill 상세
+
+GitHub GraphQL API를 사용한 데이터 조회를 위한 가이드입니다.
+
+### 주요 내용
+
+- **기본 개념**: 스키마, 필드, Connection, Edge, Node
+- **인증 및 호출**: Bearer 토큰, 쿼리/뮤테이션 작성법
+- **Rate Limit**: 시간당 5,000 포인트, 헤더 확인, 최적화 전략
+- **주요 쿼리**: user, repository, viewer, rateLimit
+- **ContributionsCollection**: 사용자 기여 데이터 조회
+- **페이지네이션**: 커서 기반 페이지 매김
+- **전역 노드 ID**: REST ↔ GraphQL 간 ID 활용
+
+### 포함 문서
+
+| 문서 | 설명 |
+|------|------|
+| GraphQL 소개 | 기본 개념, 스키마, 필드 |
+| 호출 형성 | 인증, 쿼리 작성법 |
+| Rate Limits | 속도 제한, 최적화 |
+| 쿼리 참조 | 루트 쿼리 목록 |
+| User/ContributionsCollection | 사용자 기여 데이터 |
+| 페이지네이션 | 커서 기반 페이징 |
+| 전역 노드 ID | REST-GraphQL ID 연동 |
 
 ---
 
