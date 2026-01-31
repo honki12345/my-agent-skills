@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 문서) | @tanstack/react-query 패키지 사용 시 | 2026-01-31 |
 | `github-graphql` | GitHub GraphQL API 가이드 (7개 문서) | GitHub API, GraphQL, contributionsCollection 키워드 | 2026-01-25 |
 | `nestjs` | NestJS 프레임워크 가이드 (133개 문서) | NestJS 프로젝트, @nestjs 패키지 사용 시 | 2026-01-24 |
 | `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 | 2026-01-24 |
@@ -109,6 +110,48 @@ GitHub GraphQL API를 사용한 데이터 조회를 위한 가이드입니다.
 | User/ContributionsCollection | 사용자 기여 데이터 |
 | 페이지네이션 | 커서 기반 페이징 |
 | 전역 노드 ID | REST-GraphQL ID 연동 |
+
+---
+
+## TanStack Query Skill 상세
+
+TanStack Query (React Query) v5 공식 문서 기반 개발 레퍼런스입니다. 72개의 문서를 포함합니다.
+
+### 문서 카테고리
+
+| 카테고리 | 문서 수 | 주요 내용 |
+|----------|--------|----------|
+| 루트 | 8개 | Overview, Quick Start, Installation, TypeScript 등 |
+| Guides | 35개 | Queries, Mutations, Caching, Invalidation, SSR, Suspense 등 |
+| Reference | 20개 | useQuery, useMutation, useInfiniteQuery, useSuspenseQuery 등 |
+| Core Reference | 9개 | QueryClient, QueryCache, MutationCache 등 |
+
+### 주요 가이드
+
+| 가이드 | 설명 |
+|--------|------|
+| queries.md | Query 기초 |
+| mutations.md | Mutation 기초 |
+| caching.md | 캐싱 전략 |
+| query-invalidation.md | 캐시 무효화 |
+| optimistic-updates.md | 낙관적 업데이트 |
+| infinite-queries.md | 무한 스크롤 |
+| suspense.md | React Suspense 통합 |
+| ssr.md, advanced-ssr.md | 서버 사이드 렌더링 |
+| testing.md | 테스트 작성 |
+
+### 구조
+
+```
+tanstack-query/
+├── SKILL.md           # 요약 및 핵심 패턴
+└── docs/              # 72개의 상세 문서
+    ├── overview.md
+    ├── quick-start.md
+    ├── guides/        # 35개 가이드
+    ├── reference/     # 20개 React Hook API
+    └── core-reference/ # 9개 Core API
+```
 
 ---
 
