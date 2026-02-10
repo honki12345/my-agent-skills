@@ -36,6 +36,8 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-01-31 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 공식 문서) |
+| 2026-01-30 | `ship` | 변경사항 커밋 및 푸시 자동화 (수동 호출) |
 | 2026-01-25 | `github-graphql` | GitHub GraphQL API 가이드 (7개 공식 문서) |
 | 2026-01-24 | `nestjs` | NestJS 프레임워크 가이드 (133개 공식 문서) |
 | 2026-01-24 | `sqlite` | SQLite ORM 사용자 가이드 |
@@ -68,6 +70,9 @@
 │   └── docs/               # 133개의 공식 문서
 ├── sqlite/
 │   └── SKILL.md            # SQLite skill (필수)
+├── tanstack-query/
+│   ├── SKILL.md            # TanStack Query skill (요약)
+│   └── docs/               # 72개의 공식 문서
 ├── vercel-react-best-practices/
 │   └── SKILL.md            # React/Next.js 성능 skill
 └── web-design-guidelines/
