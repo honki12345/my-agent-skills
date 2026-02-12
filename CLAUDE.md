@@ -36,6 +36,7 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-02-12 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 |
 | 2026-01-31 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 공식 문서) |
 | 2026-01-30 | `ship` | 변경사항 커밋 및 푸시 자동화 (수동 호출) |
 | 2026-01-25 | `github-graphql` | GitHub GraphQL API 가이드 (7개 공식 문서) |
@@ -65,6 +66,8 @@
 ~/.claude/skills/
 ├── CLAUDE.md               # 이 파일 (컨벤션 및 이력)
 ├── README.md               # Skills 목록 및 상세 설명
+├── obsidian-cli/
+│   └── SKILL.md            # Obsidian CLI 명령어 레퍼런스
 ├── nestjs/
 │   ├── SKILL.md            # NestJS skill (요약)
 │   └── docs/               # 133개의 공식 문서
