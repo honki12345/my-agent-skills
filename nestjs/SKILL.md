@@ -301,7 +301,7 @@ nest g pipe validation      # 파이프
 
 ## 사용법
 
-상세 내용이 필요하면 `docs/` 폴더의 해당 파일을 Read 도구로 읽으세요.
+상세 내용이 필요하면 `docs/` 폴더의 해당 파일을 직접 열어 읽으세요.
 
 예시:
 - Controllers 상세: `docs/controllers.md`

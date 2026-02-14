@@ -1,8 +1,6 @@
 ---
 name: plan-review
-description: "구현 계획 문서를 4가지 관점에서 병렬 리뷰 (문서 정합성, 웹 검증, 코드 실현 가능성, 계획 품질)"
-argument-hint: "[plan-file-path]"
-disable-model-invocation: true
+description: "구현 계획 문서를 4가지 관점(문서 정합성, 웹 검증, 코드 실현 가능성, 계획 품질)으로 리뷰한다. 설계안/실행계획/작업계획 문서의 리스크 분석이나 품질 점검 요청에서 사용한다."
 ---
 
 # Plan Review
@@ -11,8 +9,8 @@ disable-model-invocation: true
 
 ## 사용법
 
-- `/plan-review path/to/plan.md` — 지정한 계획 문서를 4가지 관점에서 리뷰
-- `/plan-review` — 인자 없이 호출하면 파일 경로를 요청
+- 계획 문서 경로가 주어지면 해당 문서를 4가지 관점으로 리뷰한다.
+- 경로가 없으면 리뷰할 계획 문서 경로를 요청한다.
 
 ## 실행 워크플로우
 
@@ -20,22 +18,20 @@ disable-model-invocation: true
 
 `$ARGUMENTS`에서 파일 경로를 추출한다.
 
-- 인자가 없으면: "리뷰할 계획 문서의 경로를 입력해주세요. 예: `/plan-review docs/plan/feature.md`" 라고 안내하고 **중단**한다.
-- 인자가 있으면: `Read` 도구로 해당 파일을 읽는다. 파일이 존재하지 않으면 에러를 안내하고 중단한다.
+- 인자가 없으면: "리뷰할 계획 문서의 경로를 입력해주세요. 예: `docs/plan/feature.md`" 라고 안내하고 **중단**한다.
+- 인자가 있으면: 해당 파일을 읽는다. 파일이 존재하지 않으면 에러를 안내하고 중단한다.
 
-### 2단계: 4개 Task 동시 실행
+### 2단계: 4개 분석 병렬 실행
 
-> **핵심**: 반드시 **하나의 메시지**에서 4개의 `Task` 도구 호출을 동시에 보내야 한다.
+> **핵심**: 아래 4개 관점을 가능한 한 병렬로 진행한다.
 
-읽어온 계획 문서 전문을 각 Task의 프롬프트에 포함시켜 4개를 **병렬**로 실행한다.
+읽어온 계획 문서 전문을 각 분석 프롬프트에 포함시켜 4개를 **병렬**로 실행한다.
 
 ---
 
-#### Task 1: 문서 정합성 (subagent_type: Explore)
+#### 분석 1: 문서 정합성
 
-**description**: "문서 정합성 체크"
-
-**prompt**:
+**프롬프트**:
 
 ```
 아래 구현 계획 문서를 프로젝트의 기존 문서와 비교하여 정합성을 검토하라.
@@ -72,11 +68,9 @@ disable-model-invocation: true
 
 ---
 
-#### Task 2: 웹 검증 (subagent_type: general-purpose)
+#### 분석 2: 웹 검증
 
-**description**: "기술 주장 웹 검증"
-
-**prompt**:
+**프롬프트**:
 
 ```
 아래 구현 계획 문서에서 기술적 주장을 추출하고 웹 검색으로 검증하라.
@@ -114,11 +108,9 @@ disable-model-invocation: true
 
 ---
 
-#### Task 3: 코드 실현 가능성 (subagent_type: Explore)
+#### 분석 3: 코드 실현 가능성
 
-**description**: "코드 실현 가능성 분석"
-
-**prompt**:
+**프롬프트**:
 
 ```
 아래 구현 계획 문서를 현재 프로젝트 코드베이스와 대조하여 실현 가능성을 평가하라.
@@ -161,11 +153,9 @@ disable-model-invocation: true
 
 ---
 
-#### Task 4: 계획 품질 (subagent_type: general-purpose)
+#### 분석 4: 계획 품질
 
-**description**: "계획 품질 평가"
-
-**prompt**:
+**프롬프트**:
 
 ```
 아래 구현 계획 문서의 품질을 7가지 차원에서 평가하라.
@@ -233,7 +223,7 @@ disable-model-invocation: true
 
 ### 3단계: 통합 리포트 출력
 
-4개 Task의 결과를 아래 템플릿으로 통합하여 출력한다.
+4개 분석 결과를 아래 템플릿으로 통합하여 출력한다.
 
 ```markdown
 # Plan Review Report
@@ -252,19 +242,19 @@ disable-model-invocation: true
 
 ## 1. 문서 정합성
 
-{Task 1 결과}
+{분석 1 결과}
 
 ## 2. 웹 검증
 
-{Task 2 결과}
+{분석 2 결과}
 
 ## 3. 코드 실현 가능성
 
-{Task 3 결과}
+{분석 3 결과}
 
 ## 4. 계획 품질
 
-{Task 4 결과}
+{분석 4 결과}
 
 ---
 
@@ -276,4 +266,4 @@ disable-model-invocation: true
 2. ...
 ```
 
-판정 및 Recommendations는 4개 결과를 종합하여 Claude가 직접 작성한다.
+판정 및 Recommendations는 4개 결과를 종합하여 에이전트가 직접 작성한다.

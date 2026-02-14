@@ -1,8 +1,6 @@
 ---
 name: git-master
-description: "Git 워크플로우 자동화 — 원자적 커밋 분리, 히스토리 정리, 변경 추적"
-argument-hint: "[commit|rebase|search <키워드>]"
-disable-model-invocation: true
+description: "Git 워크플로우 자동화(원자적 커밋 분리, 히스토리 정리, 변경 추적). 커밋 분리, rebase 계획/실행, 변경 이력 추적을 요청할 때 사용한다."
 ---
 
 # Git Master
@@ -14,10 +12,10 @@ disable-model-invocation: true
 사용자 요청에 따라 자동으로 모드를 선택한다. 명시적 지정도 가능.
 
 ```
-/git-master              → 변경사항 분석 후 자동 모드 선택
-/git-master commit       → COMMIT 모드 강제
-/git-master rebase       → REBASE 모드 강제
-/git-master search 함수명 → HISTORY_SEARCH 모드
+git-master              → 변경사항 분석 후 자동 모드 선택
+git-master commit       → COMMIT 모드 강제
+git-master rebase       → REBASE 모드 강제
+git-master search 함수명 → HISTORY_SEARCH 모드
 ```
 
 ---
@@ -125,7 +123,7 @@ git commit -m "<메시지>"
 - body: 72자 줄바꿈, "왜" 변경했는지 설명 (선택)
 
 **프로젝트별 컨벤션 우선:**
-- 커밋 전 프로젝트 루트의 `CLAUDE.md`, `AGENTS.md`를 확인하여 커밋 컨벤션이 있으면 그것을 따른다
+- 커밋 전 프로젝트 루트의 `AGENTS.md`를 확인하여 커밋 컨벤션이 있으면 그것을 따른다
 - 프로젝트 컨벤션이 없으면 위의 Conventional Commits 규칙을 기본으로 사용
 
 ---
