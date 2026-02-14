@@ -6,7 +6,9 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
-| `plan-review` | 구현 계획 문서 5관점 병렬 리뷰 + 불확실성 질의/보충 + 추가분 재검토 루프 | `/plan-review` 수동 호출 | 2026-02-14 |
+| `debug-loop` | 버그 재현 우선 + git/문서 기반 가설 검증 + 수정/로깅 반복 루프 | `/debug-loop` 수동 호출 | 2026-02-14 |
+| `implement-plan` | 계획 문서 기반 구현 + 이탈 시 승인 게이트 + 테스트 통과 시도 | `/implement-plan` 수동 호출 | 2026-02-14 |
+| `plan-review` | 구현 계획 문서 5관점 순차 요약 리뷰 + 사용자 선택 즉시 반영 + 반복 루프 | `/plan-review` 수동 호출 | 2026-02-14 |
 | `git-master` | Git 원자적 커밋 분리, 히스토리 정리, 변경 추적 | `/git-master` 수동 호출 | 2026-02-14 |
 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 | obsidian 명령어, 볼트 관리, 플러그인 관리 작업 시 | 2026-02-12 |
 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 문서) | @tanstack/react-query 패키지 사용 시 | 2026-01-31 |
@@ -192,4 +194,3 @@ nestjs/
     ├── graphql/
     └── ...
 ```
-
