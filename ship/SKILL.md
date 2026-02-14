@@ -52,7 +52,8 @@ git diff --name-only
 
 ### 5단계: 원자적 커밋
 
-@docs/conventions/COMMIT_CONVENTION.md 규칙 따라 커밋
+> `/git-master commit` 스킬을 호출하여 변경사항을 논리적 단위로 분리하고 원자적 커밋을 생성한다.
+> 프로젝트에 @docs/conventions/COMMIT_CONVENTION.md 가 있으면 해당 규칙을 따른다.
 
 ### 6단계: 이슈 관련 문서 커밋
 
