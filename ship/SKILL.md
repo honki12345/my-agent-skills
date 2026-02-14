@@ -75,14 +75,12 @@ ls docs/plan/ | grep -i "ISSUE_{이슈번호}"
 
 **체크리스트 (순서대로 실행 필수):**
 
-- [ ] 1. frontend/ 변경 시 `vercel-react-best-practices` 스킬로 리뷰 실행
-- [ ] 2. frontend/ 변경 시 `web-design-guidelines` 스킬로 리뷰 실행
-- [ ] 3. backend/ 변경 시 `sqlite` 스킬로 리뷰 실행
-- [ ] 4. backend/ 변경 시 `nestjs` 스킬로 리뷰 실행
-- [ ] 5. 프로젝트의 CI 절차 실행 (docs만 변경 시 스킵)
-- [ ] 6. 프로젝트의 문서 동기화 절차 실행 (코드 변경 시)
-- [ ] 7. 이슈 업데이트 (`gh issue edit`)
-- [ ] 8. push
+- [ ] 1. 변경사항을 `backend/frontend/database/ui/ux` 및 관련 라이브러리/프레임워크로 분류하고, 해당 도메인과 매칭되는 스킬이 있으면 모두 검토/리뷰 실행
+  - 예: `vercel-react-best-practices`, `web-design-guidelines`, `nestjs`, `sqlite`, `tanstack-query`, `github-graphql`
+- [ ] 2. 프로젝트의 CI 절차 실행 (docs만 변경 시 스킵)
+- [ ] 3. 프로젝트의 문서 동기화 절차 실행 (코드 변경 시)
+- [ ] 4. 이슈 업데이트 (`gh issue edit`)
+- [ ] 5. push
 
 ```bash
 git push -u origin {브랜치명}
