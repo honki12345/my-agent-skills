@@ -36,6 +36,8 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-02-14 | `plan-review` | 구현 계획 문서 4가지 관점 병렬 리뷰 (문서 정합성, 웹 검증, 코드 실현 가능성, 계획 품질) |
+| 2026-02-14 | `git-master` | Git 워크플로우 자동화 (원자적 커밋, 히스토리 정리, 변경 추적) |
 | 2026-02-12 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 |
 | 2026-01-31 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 공식 문서) |
 | 2026-01-30 | `ship` | 변경사항 커밋 및 푸시 자동화 (수동 호출) |
@@ -66,6 +68,10 @@
 ~/.claude/skills/
 ├── CLAUDE.md               # 이 파일 (컨벤션 및 이력)
 ├── README.md               # Skills 목록 및 상세 설명
+├── git-master/
+│   └── SKILL.md            # Git 원자적 커밋/히스토리 정리
+├── plan-review/
+│   └── SKILL.md            # 계획 문서 4관점 병렬 리뷰
 ├── obsidian-cli/
 │   └── SKILL.md            # Obsidian CLI 명령어 레퍼런스
 ├── nestjs/
