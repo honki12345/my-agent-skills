@@ -1,6 +1,6 @@
-# Claude Code Skills
+# Agent Skills
 
-개인 Claude Code skills 모음
+개인 에이전트 skills 모음
 
 ## 설치된 Skills
 
