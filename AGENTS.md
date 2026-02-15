@@ -36,10 +36,10 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
-| 2026-02-15 | `gh-review-triage` | PR 링크 기반 리뷰 코멘트 반영 여부 판정 + 근거 + 반영 방법 제시 |
+| 2026-02-15 | `gh-review-triage` | PR 코멘트별 초안 판정 + Codex 승인 인터페이스 순차 확정 + 근거/반영 방법 제시 |
 | 2026-02-14 | `debug-loop` | 버그 재현 우선 + git/문서 기반 가설 검증 + 수정/로깅 반복 루프 |
 | 2026-02-14 | `implement-plan` | 계획 문서 기반 구현 + 이탈 시 승인 게이트 + 테스트 통과 시도 |
-| 2026-02-14 | `plan-review` | 구현 계획 문서 6가지 관점 순차 요약 리뷰(테스트 계획 현실성/커버리지 포함) + 사용자 선택 즉시 반영 + 반복 루프 |
+| 2026-02-14 | `plan-review` | 구현 계획 문서 6가지 관점 순차 요약 리뷰(테스트 계획 현실성/커버리지 포함) + Codex 승인 인터페이스 기반 즉시 반영 + 반복 루프 |
 | 2026-02-14 | `git-master` | Git 워크플로우 자동화 (원자적 커밋, 히스토리 정리, 변경 추적) |
 | 2026-02-12 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 |
 | 2026-01-31 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 공식 문서) |
@@ -72,14 +72,14 @@
 ├── AGENTS.md               # 이 파일 (컨벤션 및 이력)
 ├── README.md               # Skills 목록 및 상세 설명
 ├── gh-review-triage/
-│   └── SKILL.md            # PR 리뷰 코멘트 반영 여부 판정 + 근거/반영 방법 제시
+│   └── SKILL.md            # PR 코멘트 순차 판정 + Codex 승인 인터페이스 확정
 ├── git-master/
 │   └── SKILL.md            # Git 원자적 커밋/히스토리 정리
 ├── github-graphql/
 │   ├── SKILL.md            # GitHub GraphQL API 가이드
 │   └── docs/               # 7개의 공식 문서
 ├── plan-review/
-│   └── SKILL.md            # 계획 문서 6관점 순차 리뷰(테스트 계획 검증 포함) + 사용자 선택 반영 루프
+│   └── SKILL.md            # 계획 문서 6관점 순차 리뷰 + Codex 승인 인터페이스 반영 루프
 ├── implement-plan/
 │   └── SKILL.md            # 계획 문서 기반 구현 + 승인 게이트 + 테스트
 ├── ship/
