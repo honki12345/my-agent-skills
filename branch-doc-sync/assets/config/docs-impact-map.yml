@@ -1,0 +1,68 @@
+rules:
+  - id: backend-api
+    match:
+      - "api/**"
+    docs:
+      - "README.md"
+      - "api/README.md"
+      - "README.kr.md"
+
+  - id: frontend-app
+    match:
+      - "src/**"
+      - "next.config.ts"
+      - "package.json"
+      - "tailwind.config.js"
+    docs:
+      - "README.md"
+      - "README.kr.md"
+
+  - id: model-and-language-config
+    match:
+      - "api/config/**"
+      - "src/messages/**"
+      - "src/contexts/LanguageContext.tsx"
+      - "src/i18n.ts"
+    docs:
+      - "README.md"
+      - "README.kr.md"
+      - "README.ja.md"
+      - "README.zh.md"
+      - "README.zh-tw.md"
+      - "README.es.md"
+      - "README.fr.md"
+      - "README.pt-br.md"
+      - "README.ru.md"
+      - "README.vi.md"
+
+  - id: deployment-runtime
+    match:
+      - "Dockerfile"
+      - "Dockerfile-ollama-local"
+      - "docker-compose.yml"
+      - "run.sh"
+    docs:
+      - "README.md"
+      - "Ollama-instruction.md"
+      - "README.kr.md"
+
+  - id: ci-cd
+    match:
+      - ".github/workflows/**"
+    docs:
+      - "README.md"
+      - "README.kr.md"
+
+  - id: testing
+    match:
+      - "tests/**"
+      - "test/**"
+      - "pytest.ini"
+    docs:
+      - "tests/README.md"
+      - "README.md"
+      - "README.kr.md"
+
+heuristics:
+  include_markdown_changes: true
+  include_readme_by_default: true

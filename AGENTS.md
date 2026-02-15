@@ -36,6 +36,8 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-02-15 | `codebase-doc-writer` | 저장소 코드를 직접 읽고 근거 기반 기술 문서 패키지 생성/갱신 |
+| 2026-02-15 | `branch-doc-sync` | 현재 브랜치 변경분을 분석해 필요한 문서를 직접 수정 |
 | 2026-02-15 | `gh-review-triage` | PR 코멘트별 초안 판정 + 수동 텍스트 승인 루프 순차 확정 + 반영 후 계획 문서 동기화 |
 | 2026-02-14 | `debug-loop` | 버그 재현 우선 + git/문서 기반 가설 검증 + 수정/로깅 반복 루프 |
 | 2026-02-14 | `implement-plan` | 계획 문서 기반 구현 + 이탈 시 승인 게이트 + 테스트 통과 시도 |
@@ -71,6 +73,20 @@
 ~/.claude/skills/
 ├── AGENTS.md               # 이 파일 (컨벤션 및 이력)
 ├── README.md               # Skills 목록 및 상세 설명
+├── codebase-doc-writer/
+│   ├── SKILL.md            # 저장소 코드 기반 문서 생성/갱신
+│   └── references/
+│       └── doc-pack-template.md
+├── branch-doc-sync/
+│   ├── SKILL.md            # 브랜치 변경분 기준 문서 영향 분석 + 문서 직접 수정
+│   ├── scripts/
+│   │   ├── generate_doc_impact_report.py
+│   │   └── requirements.txt
+│   ├── assets/
+│   │   ├── config/docs-impact-map.yml
+│   │   └── workflows/docs-impact-pr.yml
+│   └── references/
+│       └── report-format.md
 ├── gh-review-triage/
 │   └── SKILL.md            # PR 코멘트 순차 판정 + 반영 후 계획 문서 동기화
 ├── git-master/

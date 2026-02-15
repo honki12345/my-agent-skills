@@ -1,0 +1,83 @@
+name: docs-impact-pr
+
+on:
+  pull_request:
+    types:
+      - closed
+  workflow_dispatch:
+    inputs:
+      pr_number:
+        description: "Merged PR number to analyze"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  generate-doc-impact:
+    runs-on: ubuntu-latest
+    if: >-
+      github.event_name == 'workflow_dispatch' ||
+      (github.event.pull_request.merged == true &&
+      !startsWith(github.event.pull_request.head.ref, 'docs-impact/'))
+
+    steps:
+      - name: Resolve context
+        id: ctx
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "pr_number=${{ inputs.pr_number }}" >> "$GITHUB_OUTPUT"
+            echo "base_ref=${{ github.ref_name }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "pr_number=${{ github.event.pull_request.number }}" >> "$GITHUB_OUTPUT"
+            echo "base_ref=${{ github.event.pull_request.base.ref }}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Checkout base branch
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.ctx.outputs.base_ref }}
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install -r scripts/docs_impact/requirements.txt
+
+      - name: Generate docs impact report
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_REPOSITORY: ${{ github.repository }}
+          PR_NUMBER: ${{ steps.ctx.outputs.pr_number }}
+          DOC_IMPACT_AI_PROVIDER: ${{ vars.DOC_IMPACT_AI_PROVIDER }}
+          DOC_IMPACT_AI_MODEL: ${{ vars.DOC_IMPACT_AI_MODEL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: python scripts/docs_impact/generate_doc_impact_report.py
+
+      - name: Create docs impact pull request
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: docs-impact/pr-${{ steps.ctx.outputs.pr_number }}
+          base: ${{ steps.ctx.outputs.base_ref }}
+          delete-branch: true
+          title: "docs: impact updates for merged PR #${{ steps.ctx.outputs.pr_number }}"
+          commit-message: "docs: add impact report for PR #${{ steps.ctx.outputs.pr_number }}"
+          body: |
+            Generated docs impact report for merged PR #${{ steps.ctx.outputs.pr_number }}.
+
+            - Source PR: #${{ steps.ctx.outputs.pr_number }}
+            - Generator: `.github/workflows/docs-impact-pr.yml`
+            - Script: `scripts/docs_impact/generate_doc_impact_report.py`
+
+            This PR only contains generated documentation-impact analysis.
+          add-paths: |
+            docs/impact-reports/pr-${{ steps.ctx.outputs.pr_number }}-impact.md
+          labels: |
+            documentation
+            automation
