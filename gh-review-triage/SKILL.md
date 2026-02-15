@@ -1,6 +1,6 @@
 ---
 name: gh-review-triage
-description: GitHub Pull Request 링크를 입력받아 리뷰 코멘트(라인 코멘트/리뷰 코멘트/일반 코멘트)를 수집하고, 코멘트별 초안 판정을 만든 뒤 수동 텍스트 승인 루프로 순차 확정한다. 최종적으로 반영 여부 근거와 반영 방법/검증 방법을 제시할 때 사용한다.
+description: GitHub Pull Request 링크를 입력받아 리뷰 코멘트(라인 코멘트/리뷰 코멘트/일반 코멘트)를 수집하고, 코멘트별 초안 판정을 만든 뒤 수동 텍스트 승인 루프로 순차 확정한다. 실제 반영이 수행되면 마지막에 계획 문서 변경분까지 동기화할 때 사용한다.
 ---
 
 # GH Review Triage
@@ -15,14 +15,18 @@ PR 리뷰 코멘트를 실행 가능한 액션으로 분류하는 작업용 스�
 3. 코드베이스/컨벤션/테스트 맥락과 충돌하는 의견은 무비판 수용하지 않는다.
 4. 정보가 부족하면 추측하지 말고 `미반영(판단 보류)`로 분리한다.
 5. 사용자 의견/승인은 코멘트 단위로 순차 수집한다.
+6. 실제 반영이 발생하면 종료 전에 계획 문서를 최신 상태로 갱신한다.
 
 ## 사용법
 
-- 호출 예시: `/gh-review-triage https://github.com/org/repo/pull/123`
+- 호출 예시:
+  - `/gh-review-triage https://github.com/org/repo/pull/123`
+  - `/gh-review-triage https://github.com/org/repo/pull/123 docs/plan/feature-x.md`
 - `$ARGUMENTS`가 없으면 PR 링크를 요청하고 중단한다.
 - 지원 URL:
   - `https://github.com/{owner}/{repo}/pull/{number}`
   - `http://github.com/{owner}/{repo}/pull/{number}`
+- PR URL 뒤에 추가 인자가 있으면 계획 문서 경로 후보(`PLAN_DOC_PATH`)로 처리한다.
 
 ## 수동 텍스트 승인 루프 규칙
 
@@ -41,7 +45,8 @@ PR 리뷰 코멘트를 실행 가능한 액션으로 분류하는 작업용 스�
 1. `$ARGUMENTS`에서 PR URL을 추출한다.
 2. URL 패턴이 맞지 않으면 올바른 예시를 제시하고 중단한다.
 3. URL에서 `OWNER`, `REPO`, `PR_NUMBER`를 추출한다.
-4. `gh` 인증/권한을 점검한다.
+4. PR URL 뒤 추가 인자가 있으면 `PLAN_DOC_PATH`로 저장한다.
+5. `gh` 인증/권한을 점검한다.
    - 실패 시 `gh auth status` 결과와 함께 접근 권한 문제를 안내하고 중단한다.
 
 ### 2단계: 리뷰 코멘트 수집
@@ -148,7 +153,29 @@ gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/comments?per_page=100" --paginate
 - 기본 선택: `승인`, `승인 안 함`
 - `Other(다른 지시)` 또는 `수정 지시: ...` 입력 시 대안안을 갱신해 재질의
 
-### 7단계: 최종 보고 형식
+### 7단계: 반영 완료 후 계획 문서 업데이트
+
+`final_decisions`에서 최종 판단이 `반영`이고 실제 반영 작업이 수행된 항목이 1건 이상이면, 종료 전에 계획 문서를 동기화한다.
+
+1. 계획 문서 경로 확보:
+   - `PLAN_DOC_PATH`가 있으면 사용
+   - 없으면 수동 텍스트로 아래 중 하나를 받는다.
+     - `계획 문서 경로: <path>`
+     - `계획 문서 없음`
+2. `계획 문서 없음`이 입력되면 동기화를 건너뛰고 사유를 `plan_doc_update_log`에 기록한다.
+3. 경로가 있으면 파일 존재를 확인한다.
+   - 없으면 경로 재입력을 1회 요청하고, 재시도 후에도 없으면 동기화를 건너뛴다.
+4. 문서 업데이트 규칙:
+   - `PR 리뷰 반영 내역` 섹션이 있으면 해당 섹션에 이번 반영분을 추가
+   - 섹션이 없으면 문서 끝에 `## PR 리뷰 반영 내역 ({YYYY-MM-DD})` 섹션을 생성
+5. 반영된 코멘트별로 아래 정보를 기록한다.
+   - 코멘트 ID/요약
+   - 실제 변경 파일/함수
+   - 검증 결과(테스트/수동 확인)
+   - 후속 작업(있으면)
+6. 동기화 결과(`UPDATED / SKIPPED / FAILED`)를 `plan_doc_update_log`에 기록하고 최종 보고에 포함한다.
+
+### 8단계: 최종 보고 형식
 
 아래 포맷으로 답변한다.
 
@@ -178,6 +205,12 @@ gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/comments?per_page=100" --paginate
 - 미반영: {n}건
 - 판단 보류: {n}건 (필요 정보: {요약})
 - 사용자 미승인: {n}건
+- 계획 문서 업데이트: UPDATED / SKIPPED / FAILED
+
+## 계획 문서 업데이트
+- 대상 문서: {경로 또는 N/A}
+- 동기화 건수: {n}
+- 메모: {갱신 내용 요약 또는 스킵/실패 사유}
 ```
 
 ## 금지 사항
@@ -186,3 +219,4 @@ gh api "repos/$OWNER/$REPO/issues/$PR_NUMBER/comments?per_page=100" --paginate
 - `반영` 판단인데 구체적인 변경 방법/검증 계획을 누락
 - 리뷰어 권위만으로 무비판 수용
 - 여러 코멘트를 묶어 한 번에 승인 요청
+- 실제 반영이 있었는데 계획 문서 동기화 없이 종료
