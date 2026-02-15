@@ -13,6 +13,7 @@
 | `git-master` | Git 원자적 커밋 분리, 히스토리 정리, 변경 추적 | `/git-master` 수동 호출 | 2026-02-14 |
 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 | obsidian 명령어, 볼트 관리, 플러그인 관리 작업 시 | 2026-02-12 |
 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 문서) | @tanstack/react-query 패키지 사용 시 | 2026-01-31 |
+| `ship` | 변경사항 커밋/푸시 워크플로우 자동화 | `ship` 또는 `ship {문서경로}` 요청 시 | 2026-01-30 |
 | `github-graphql` | GitHub GraphQL API 가이드 (7개 문서) | GitHub API, GraphQL, contributionsCollection 키워드 | 2026-01-25 |
 | `nestjs` | NestJS 프레임워크 가이드 (133개 문서) | NestJS 프로젝트, @nestjs 패키지 사용 시 | 2026-01-24 |
 | `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 | 2026-01-24 |
@@ -22,6 +23,131 @@
 ## 사용법
 
 이 디렉토리의 skills는 모든 프로젝트에서 자동으로 사용 가능합니다.
+
+---
+
+## GH Review Triage Skill 상세
+
+PR 링크를 입력받아 리뷰 코멘트의 반영 여부를 판단하고 실행 가능한 액션으로 정리하는 작업형 스킬입니다.
+
+### 주요 내용
+
+- `gh` CLI로 인라인 코멘트/리뷰 코멘트/일반 코멘트를 모두 수집
+- 코멘트별 `반영`/`미반영`/`판단 보류` 판정 및 근거 제시
+- `반영` 항목은 수정 대상, 변경 방향, 검증 방법까지 필수 제시
+- 충돌 코멘트/범위 초과 리팩토링 필요 시 승인 게이트 적용
+
+### 사용 예시
+
+```
+/gh-review-triage https://github.com/org/repo/pull/123
+```
+
+---
+
+## Debug Loop Skill 상세
+
+버그 상황에서 재현을 최우선으로 두고, 가설 검증 루프를 반복해 원인을 좁히는 디버깅 스킬입니다.
+
+### 주요 내용
+
+- 재현 성공 전 임의 수정 금지
+- git 변경 이력 + 로그 + 프로젝트 문서 기반 가설 수립
+- `가설 -> 최소 수정/로깅 -> 재현 테스트` 반복
+- 방향 전환/대규모 변경 필요 시 승인 게이트 적용
+
+### 사용 예시
+
+```
+/debug-loop "로그인 시 500 에러" "logs/server.log"
+```
+
+---
+
+## Implement Plan Skill 상세
+
+계획 문서를 기준으로 구현을 수행하고, 계획 이탈 시 승인 절차를 강제하는 구현 스킬입니다.
+
+### 주요 내용
+
+- 계획 문서의 목표/범위/제약 내에서만 구현
+- 모순/불확실/계획 외 변경 필요 시 즉시 승인 요청
+- 계획 문서에 테스트 항목이 있으면 전체 통과까지 반복 시도
+- 결과 보고 시 계획 대비 완료 항목과 남은 리스크를 명시
+
+### 사용 예시
+
+```
+/implement-plan docs/plan/feature-x.md
+```
+
+---
+
+## Plan Review Skill 상세
+
+구현 계획 문서를 6가지 관점으로 순차 리뷰하고, 사용자 선택을 받아 즉시 문서에 반영하는 인터랙티브 리뷰 스킬입니다.
+
+### 주요 내용
+
+- 관점별 요약 후 `SKIP/APPLY_INLINE/APPLY_ADDENDUM/EDIT_THEN_APPLY` 선택
+- 관점별 제안이 없으면 자동 `PASS_NO_ACTION` 처리
+- 6개 관점 완료 후 변경이 있으면 다음 iteration 반복
+- 테스트 계획의 현실성/커버리지를 별도 관점으로 강제 점검
+
+---
+
+## Git Master Skill 상세
+
+Git 작업을 `COMMIT/REBASE/HISTORY_SEARCH` 모드로 자동화하는 워크플로우 스킬입니다.
+
+### 주요 내용
+
+- 변경사항을 논리 단위로 분리해 원자적 커밋 생성
+- rebase 전략(squash/reword/reorder/fixup) 제안
+- 함수/파일/라인 기준 변경 이력 추적 지원
+- 프로젝트별 커밋 컨벤션이 있으면 우선 적용
+
+### 사용 예시
+
+```
+git-master
+git-master commit
+git-master rebase
+git-master search 함수명
+```
+
+---
+
+## Obsidian CLI Skill 상세
+
+Obsidian CLI 명령어를 빠르게 찾아 실행할 수 있도록 정리한 레퍼런스 스킬입니다.
+
+### 주요 내용
+
+- 파일/폴더/검색/태그/작업/속성 조작 명령 정리
+- 플러그인/템플릿/히스토리/Sync/Publish 명령 포함
+- 볼트 타겟팅(`vault=`, `file=`, `path=`) 패턴 가이드 제공
+- TUI 모드/파라미터/플래그 사용법 포함
+
+---
+
+## Ship Skill 상세
+
+변경사항을 이슈/브랜치/커밋/검증/push/PR까지 한 번에 진행하는 자동화 스킬입니다.
+
+### 주요 내용
+
+- `ship` 또는 `ship {문서경로}`로 이슈 생성/재사용 분기
+- 브랜치 생성 및 원자적 커밋(`git-master` 연동)
+- push 전 필수 체크리스트(CI/문서 동기화/도메인 스킬 검토)
+- 최종적으로 PR 생성까지 자동 진행
+
+### 사용 예시
+
+```
+ship
+ship docs/plan/ISSUE_123_feature.md
+```
 
 ---
 

@@ -75,10 +75,15 @@
 │   └── SKILL.md            # PR 리뷰 코멘트 반영 여부 판정 + 근거/반영 방법 제시
 ├── git-master/
 │   └── SKILL.md            # Git 원자적 커밋/히스토리 정리
+├── github-graphql/
+│   ├── SKILL.md            # GitHub GraphQL API 가이드
+│   └── docs/               # 7개의 공식 문서
 ├── plan-review/
 │   └── SKILL.md            # 계획 문서 6관점 순차 리뷰(테스트 계획 검증 포함) + 사용자 선택 반영 루프
 ├── implement-plan/
 │   └── SKILL.md            # 계획 문서 기반 구현 + 승인 게이트 + 테스트
+├── ship/
+│   └── SKILL.md            # 변경사항 커밋/푸시 워크플로우 자동화
 ├── debug-loop/
 │   └── SKILL.md            # 버그 재현/가설 검증/수정 반복 루프
 ├── obsidian-cli/
@@ -134,18 +139,44 @@ description: Skill 설명. Claude가 자동 로드 여부를 결정할 때 사�
 여기에 Claude가 따를 지침을 작성합니다.
 ```
 
-### 3. README.md 및 AGENTS.md 업데이트
+### 3. README.md 및 AGENTS.md 동기화 (생성/변경/삭제 공통)
 
-- README.md의 "설치된 Skills" 테이블에 추가
-- AGENTS.md의 "Skill 생성 이력" 테이블에 추가
+- 생성 시
+  - README.md의 "설치된 Skills" 테이블에 새 skill 추가
+  - README.md에 `{Skill} Skill 상세` 섹션 추가(주요 내용/사용 예시 포함)
+  - AGENTS.md의 "Skill 생성 이력" 테이블에 추가
+
+- 변경 시
+  - README.md의 해당 skill 행(설명/트리거) 최신화
+  - README.md의 해당 상세 섹션 내용을 SKILL.md 기준으로 최신화
+  - 변경 성격이 크면 AGENTS.md "Skill 생성 이력" 설명도 현재 상태에 맞게 보정
+
+- 삭제 시
+  - README.md의 해당 skill 행 삭제
+  - README.md의 해당 상세 섹션 삭제
+  - AGENTS.md 디렉토리 구조에서 해당 경로 제거
+  - AGENTS.md 생성 이력은 보존하되 설명에 삭제 사실과 날짜를 표기 (예: `(삭제됨: 2026-02-20)`)
 
 ### 4. 커밋 및 push
 
 ```bash
 cd ~/.claude/skills
 git add -A
-git commit -m "feat: {skill-name} skill 추가"
+git commit -m "{타입}: {설명}"
 git push
+```
+
+### 5. 동기화 검증 (권장)
+
+```bash
+# 실제 skill 폴더 목록
+find . -maxdepth 2 -type f -name "SKILL.md" | sort
+
+# README 설치된 Skills 테이블 항목 확인
+rg '^\| `[^`]+` \|' README.md
+
+# README 상세 섹션 목록 확인
+rg '^## .* Skill 상세$' README.md
 ```
 
 ---
