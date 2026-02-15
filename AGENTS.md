@@ -36,6 +36,7 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-02-15 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 |
 | 2026-02-15 | `codebase-doc-writer` | 저장소 코드를 직접 읽고 근거 기반 기술 문서 패키지 생성/갱신 |
 | 2026-02-15 | `branch-doc-sync` | 현재 브랜치 변경분을 분석해 필요한 문서를 직접 수정 |
 | 2026-02-15 | `gh-review-triage` | PR 코멘트별 초안 판정 + 수동 텍스트 승인 루프 순차 확정 + 반영 후 계획 문서 동기화 |
@@ -89,6 +90,8 @@
 │       └── report-format.md
 ├── gh-review-triage/
 │   └── SKILL.md            # PR 코멘트 순차 판정 + 반영 후 계획 문서 동기화
+├── issue-worktree-plan/
+│   └── SKILL.md            # 이슈 URL 기반 worktree 브랜치 + 계획 문서 생성
 ├── git-master/
 │   └── SKILL.md            # Git 원자적 커밋/히스토리 정리
 ├── github-graphql/

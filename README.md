@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 | `/issue-worktree-plan {issue-url}` 요청 시 | 2026-02-15 |
 | `codebase-doc-writer` | 저장소 코드를 직접 읽어 기술 문서 패키지 생성/갱신 | 프로젝트 문서화, 위키 문서화, 코드 기준 문서 갱신 요청 시 | 2026-02-15 |
 | `branch-doc-sync` | 현재 브랜치 변경분을 분석해 필요한 문서를 직접 수정 | 브랜치 변경사항 기준으로 문서 동기화 요청 시 | 2026-02-15 |
 | `gh-review-triage` | PR 코멘트별 초안 판정 + 수동 텍스트 승인 루프 순차 확정 + 반영 후 계획 문서 업데이트 | PR 링크로 리뷰 코멘트 판정을 요청할 때 | 2026-02-15 |
@@ -25,6 +26,25 @@
 ## 사용법
 
 이 디렉토리의 skills는 모든 프로젝트에서 자동으로 사용 가능합니다.
+
+---
+
+## Issue Worktree Plan Skill 상세
+
+GitHub 이슈 URL 하나로 작업용 worktree 브랜치와 계획 문서를 동시에 초기화하는 작업형 스킬입니다.
+
+### 주요 내용
+
+- GitHub issue URL 파싱 및 이슈 메타데이터(`gh issue view`) 확인
+- 기본 브랜치 기준 `git worktree add`로 분리 작업 디렉토리 생성
+- `docs/plan/ISSUE_{번호}_{slug}.md` 규칙으로 계획 문서 생성
+- 브랜치/워크트리/문서 충돌 시 덮어쓰기 없이 사용자 확인 게이트 적용
+
+### 사용 예시
+
+```
+/issue-worktree-plan https://github.com/org/repo/issues/123
+```
 
 ---
 
