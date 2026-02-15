@@ -15,7 +15,7 @@
 | `git-master` | Git 원자적 커밋 분리, 히스토리 정리, 변경 추적 | `/git-master` 수동 호출 | 2026-02-14 |
 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 | obsidian 명령어, 볼트 관리, 플러그인 관리 작업 시 | 2026-02-12 |
 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 문서) | @tanstack/react-query 패키지 사용 시 | 2026-01-31 |
-| `ship` | 변경사항 커밋/푸시 워크플로우 자동화 | `ship` 또는 `ship {문서경로}` 요청 시 | 2026-01-30 |
+| `ship` | 변경사항 커밋/푸시 자동화 + PR CI 폴링/실패 복구 | `ship` 또는 `ship {문서경로}` 요청 시 | 2026-01-30 |
 | `github-graphql` | GitHub GraphQL API 가이드 (7개 문서) | GitHub API, GraphQL, contributionsCollection 키워드 | 2026-01-25 |
 | `nestjs` | NestJS 프레임워크 가이드 (133개 문서) | NestJS 프로젝트, @nestjs 패키지 사용 시 | 2026-01-24 |
 | `sqlite` | SQLite 데이터베이스 가이드 | .db/.sqlite 파일 작업, ORM 사용 시 | 2026-01-24 |
@@ -176,14 +176,16 @@ Obsidian CLI 명령어를 빠르게 찾아 실행할 수 있도록 정리한 레
 
 ## Ship Skill 상세
 
-변경사항을 이슈/브랜치/커밋/검증/push/PR까지 한 번에 진행하는 자동화 스킬입니다.
+변경사항을 이슈/브랜치/커밋/검증/push/PR/CI 복구 루프까지 한 번에 진행하는 자동화 스킬입니다.
 
 ### 주요 내용
 
 - `ship` 또는 `ship {문서경로}`로 이슈 생성/재사용 분기
 - 브랜치 생성 및 원자적 커밋(`git-master` COMMIT 절차 사용)
 - push 전 필수 체크리스트(CI/문서 동기화/도메인 스킬 검토)
-- 최종 결과에 이슈/브랜치/커밋/PR과 리뷰/검증 결과를 함께 요약
+- PR 생성 후 CI 상태를 주기적으로 폴링하고 실패 시 run 로그 기반 분석 수행
+- 실패 원인 수정 커밋/push 후 CI 재확인 루프를 반복
+- 최종 결과에 이슈/브랜치/커밋/PR, 리뷰/검증 결과, CI 폴링/복구 이력을 함께 요약
 
 ### 사용 예시
 

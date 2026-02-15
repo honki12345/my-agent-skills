@@ -45,7 +45,7 @@
 | 2026-02-14 | `git-master` | Git 워크플로우 자동화 (원자적 커밋, 히스토리 정리, 변경 추적) |
 | 2026-02-12 | `obsidian-cli` | Obsidian CLI 명령어 레퍼런스 |
 | 2026-01-31 | `tanstack-query` | TanStack Query (React Query) v5 가이드 (72개 공식 문서) |
-| 2026-01-30 | `ship` | 변경사항 커밋 및 푸시 자동화 (수동 호출) |
+| 2026-01-30 | `ship` | 변경사항 커밋/푸시 자동화 + PR CI 폴링/실패 분석 반영 루프 (수동 호출) |
 | 2026-01-25 | `github-graphql` | GitHub GraphQL API 가이드 (7개 공식 문서) |
 | 2026-01-24 | `nestjs` | NestJS 프레임워크 가이드 (133개 공식 문서) |
 | 2026-01-24 | `sqlite` | SQLite ORM 사용자 가이드 |

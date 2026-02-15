@@ -1,11 +1,11 @@
 ---
 name: ship
-description: 변경사항 커밋/푸시 워크플로우 자동화. 이슈 생성, 브랜치 생성, 원자적 커밋, 검증, push, PR 생성을 한 번에 진행해 달라는 명시적 요청에서 사용한다.
+description: 변경사항 커밋/푸시 워크플로우 자동화. 이슈 생성, 브랜치 생성, 원자적 커밋, 검증, push, PR 생성 후 CI 폴링/실패 복구까지 한 번에 진행해 달라는 명시적 요청에서 사용한다.
 ---
 
 # 변경사항 커밋 및 푸시
 
-현재 변경사항을 분석하여 이슈 생성 → 브랜치 생성 → 원자적 커밋 → CI → 푸시까지 자동화합니다.
+현재 변경사항을 분석하여 이슈 생성 → 브랜치 생성 → 원자적 커밋 → CI → 푸시 → PR → CI 폴링/실패 복구까지 자동화합니다.
 
 ## 사용법
 
@@ -103,7 +103,64 @@ gh pr create --repo boostcampwm2025/web19-estrogenquattro \
   --body "..."
 ```
 
-### 9단계: 결과 출력
+### 9단계: PR CI 폴링 및 실패 복구 루프
+
+> **핵심**: 8단계에서 생성한 PR의 CI가 모두 통과할 때까지 계속 폴링한다.
+> 실패가 발생하면 즉시 분석하고 수정 커밋을 반영한 뒤 다시 폴링한다.
+
+**PR 식별자 확보**
+
+```bash
+PR_NUMBER="{8단계에서 생성한 PR 번호}"
+POLL_INTERVAL_SEC=60
+```
+
+**상태 폴링 (60초 간격 반복)**
+
+```bash
+gh pr view "$PR_NUMBER" --json statusCheckRollup --jq '
+  .statusCheckRollup[] |
+  [.name // .context, (.conclusion // .status // .state // "PENDING"), (.detailsUrl // .targetUrl // "")] |
+  @tsv
+'
+```
+
+**상태 판정 규칙**
+- `SUCCESS`만 남으면 종료
+- `PENDING/IN_PROGRESS/QUEUED/EXPECTED/WAITING`이 하나라도 있으면 `sleep "$POLL_INTERVAL_SEC"` 후 재조회
+- `FAILURE/ERROR/CANCELLED/TIMED_OUT`이 하나라도 있으면 아래 실패 복구 절차 수행
+
+**실패 복구 절차**
+1. 최신 실패 run 식별
+
+```bash
+HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
+gh run list --limit 50 --json databaseId,headBranch,event,status,conclusion,name,url,createdAt --jq \
+  ".[] | select(.headBranch == \"$HEAD_BRANCH\" and .event == \"pull_request\") | [.databaseId, .name, .status, .conclusion, .url] | @tsv"
+```
+
+2. 실패 로그 수집
+
+```bash
+gh run view {RUN_ID} --log-failed
+```
+
+3. `debug-loop` 스킬과 도메인 스킬을 사용해 원인 재현/분석 후 수정 반영
+4. 필요한 로컬 테스트/검증 실행
+5. 수정사항 commit + push
+6. PR에 실패 원인/수정 내용/검증 결과 업데이트
+
+```bash
+gh pr comment "$PR_NUMBER" --body "CI 실패 원인, 수정 내용, 검증 결과 요약"
+```
+
+7. 9단계 폴링 루프로 복귀
+
+**예외 처리**
+- 동일 실패 패턴이 2회 이상 반복되면 원인과 대안을 정리해 사용자 승인 후 진행
+- 권한/시크릿/외부 장애 등 자동 수정 불가 사유는 즉시 보고하고 필요한 수동 조치를 명시
+
+### 10단계: 결과 출력
 
 아래 항목을 함께 요약 출력한다.
 - 이슈/브랜치/커밋/PR 정보
@@ -111,3 +168,6 @@ gh pr create --repo boostcampwm2025/web19-estrogenquattro \
   - 실행한 스킬 목록
   - 결과 요약(문제 없음/수정 반영/미반영)
   - 미반영 항목이 있으면 사유와 후속 액션
+- PR CI 폴링/복구 결과
+  - 폴링 횟수와 최종 상태
+  - 실패 발생 시 원인 요약, 수정 커밋, 재검증 결과
