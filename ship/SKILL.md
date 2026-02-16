@@ -103,9 +103,10 @@ gh pr create --repo boostcampwm2025/web19-estrogenquattro \
   --body "..."
 ```
 
-### 9단계: PR CI 폴링 및 실패 복구 루프
+### 9단계: PR GitHub Actions CI 폴링 및 실패 복구 루프
 
-> **핵심**: 8단계에서 생성한 PR의 CI가 모두 통과할 때까지 계속 폴링한다.
+> **핵심**: 8단계에서 생성한 PR의 **GitHub Actions CI run만** 모두 통과할 때까지 계속 폴링한다.
+> CodeRabbit/Copilot 등 외부 리뷰 체크는 대기 대상에서 제외한다.
 > 실패가 발생하면 즉시 분석하고 수정 커밋을 반영한 뒤 다시 폴링한다.
 
 **PR 식별자 확보**
@@ -118,16 +119,18 @@ POLL_INTERVAL_SEC=60
 **상태 폴링 (60초 간격 반복)**
 
 ```bash
-gh pr view "$PR_NUMBER" --json statusCheckRollup --jq '
-  .statusCheckRollup[] |
-  [.name // .context, (.conclusion // .status // .state // "PENDING"), (.detailsUrl // .targetUrl // "")] |
-  @tsv
-'
+HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
+HEAD_SHA=$(gh pr view "$PR_NUMBER" --json headRefOid --jq .headRefOid)
+gh run list --limit 100 --json databaseId,headBranch,headSha,event,status,conclusion,name,url,createdAt --jq \
+  ".[] |
+   select(.headBranch == \"$HEAD_BRANCH\" and .headSha == \"$HEAD_SHA\" and .event == \"pull_request\") |
+   [.name, (.conclusion // .status // \"PENDING\"), .url] |
+   @tsv"
 ```
 
 **상태 판정 규칙**
+- 조회 결과가 없거나 `PENDING/IN_PROGRESS/QUEUED/WAITING`이 하나라도 있으면 `sleep "$POLL_INTERVAL_SEC"` 후 재조회
 - `SUCCESS`만 남으면 종료
-- `PENDING/IN_PROGRESS/QUEUED/EXPECTED/WAITING`이 하나라도 있으면 `sleep "$POLL_INTERVAL_SEC"` 후 재조회
 - `FAILURE/ERROR/CANCELLED/TIMED_OUT`이 하나라도 있으면 아래 실패 복구 절차 수행
 
 **실패 복구 절차**
@@ -135,8 +138,9 @@ gh pr view "$PR_NUMBER" --json statusCheckRollup --jq '
 
 ```bash
 HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
-gh run list --limit 50 --json databaseId,headBranch,event,status,conclusion,name,url,createdAt --jq \
-  ".[] | select(.headBranch == \"$HEAD_BRANCH\" and .event == \"pull_request\") | [.databaseId, .name, .status, .conclusion, .url] | @tsv"
+HEAD_SHA=$(gh pr view "$PR_NUMBER" --json headRefOid --jq .headRefOid)
+gh run list --limit 50 --json databaseId,headBranch,headSha,event,status,conclusion,name,url,createdAt --jq \
+  ".[] | select(.headBranch == \"$HEAD_BRANCH\" and .headSha == \"$HEAD_SHA\" and .event == \"pull_request\") | [.databaseId, .name, .status, .conclusion, .url] | @tsv"
 ```
 
 2. 실패 로그 수집
