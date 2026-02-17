@@ -20,9 +20,11 @@ PR 리뷰 코멘트를 실행 가능한 액션으로 분류하는 작업용 스�
 ## 사용법
 
 - 호출 예시:
+  - `/gh-review-triage` (현재 브랜치에 연결된 PR 자동 탐지)
   - `/gh-review-triage https://github.com/org/repo/pull/123`
   - `/gh-review-triage https://github.com/org/repo/pull/123 docs/plan/feature-x.md`
-- `$ARGUMENTS`가 없으면 PR 링크를 요청하고 중단한다.
+- `$ARGUMENTS`가 없으면 `gh pr view`로 현재 브랜치에 연결된 PR을 자동 탐지해 진행한다.
+  - 탐지 실패 시 PR 링크를 요청하고 중단한다.
 - 지원 URL:
   - `https://github.com/{owner}/{repo}/pull/{number}`
   - `http://github.com/{owner}/{repo}/pull/{number}`
@@ -42,12 +44,20 @@ PR 리뷰 코멘트를 실행 가능한 액션으로 분류하는 작업용 스�
 
 ### 1단계: 입력/접근성 확인
 
-1. `$ARGUMENTS`에서 PR URL을 추출한다.
-2. URL 패턴이 맞지 않으면 올바른 예시를 제시하고 중단한다.
-3. URL에서 `OWNER`, `REPO`, `PR_NUMBER`를 추출한다.
-4. PR URL 뒤 추가 인자가 있으면 `PLAN_DOC_PATH`로 저장한다.
-5. `gh` 인증/권한을 점검한다.
+1. `gh` 인증/권한을 점검한다.
    - 실패 시 `gh auth status` 결과와 함께 접근 권한 문제를 안내하고 중단한다.
+2. `PR_URL`을 확보한다.
+   - `$ARGUMENTS`에서 PR URL을 추출한다.
+   - `$ARGUMENTS`가 비어 있으면 현재 브랜치 PR을 자동 탐지한다.
+
+```bash
+gh pr view --json url --jq .url
+```
+
+   - 위 명령이 실패하거나 URL을 얻지 못하면 PR 링크를 요청하고 중단한다.
+3. URL 패턴이 맞지 않으면 올바른 예시를 제시하고 중단한다.
+4. URL에서 `OWNER`, `REPO`, `PR_NUMBER`를 추출한다.
+5. PR URL 뒤 추가 인자가 있으면 `PLAN_DOC_PATH`로 저장한다.
 
 ### 2단계: 리뷰 코멘트 수집
 
