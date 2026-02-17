@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `pr-ci-loop` | PR URL 기반 GitHub Actions CI 실패 분석/수정 커밋/푸시 + 성공까지 폴링 루프 | `/pr-ci-loop {pr-url}` 요청 시 | 2026-02-17 |
 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 | `/issue-worktree-plan {issue-url}` 요청 시 | 2026-02-15 |
 | `codebase-doc-writer` | 저장소 코드를 직접 읽어 기술 문서 패키지 생성/갱신 | 프로젝트 문서화, 위키 문서화, 코드 기준 문서 갱신 요청 시 | 2026-02-15 |
 | `branch-doc-sync` | 현재 브랜치 변경분을 분석해 필요한 문서를 직접 수정 | 브랜치 변경사항 기준으로 문서 동기화 요청 시 | 2026-02-15 |
@@ -214,6 +215,27 @@ Obsidian CLI 명령어를 빠르게 찾아 실행할 수 있도록 정리한 레
 ```
 ship
 ship docs/plan/ISSUE_123_feature.md
+```
+
+---
+
+## PR CI Loop Skill 상세
+
+PR URL을 기준으로 현재 브랜치가 PR head branch와 일치하는지 검증한 뒤, GitHub Actions CI 실패를 분석/수정 커밋/푸시하고 성공까지 폴링으로 확인하는 작업형 스킬입니다.
+
+### 주요 내용
+
+- PR URL 파싱 및 저장소/PR 번호 식별
+- 현재 브랜치 == PR head branch 불일치 시 즉시 실패
+- GitHub Actions run만 대상으로 CI 상태 폴링 (CodeRabbit/Copilot 등 코드리뷰 체크 제외)
+- 실패 run 로그(`gh run view --log-failed`) 기반 원인 분석 및 최소 수정
+- 수정 커밋/push 후 CI 재확인 루프 반복
+- 동일 실패 반복/권한/시크릿/외부 장애 등 자동 수정 불가 시 중단 후 보고
+
+### 사용 예시
+
+```
+/pr-ci-loop https://github.com/org/repo/pull/123
 ```
 
 ---
