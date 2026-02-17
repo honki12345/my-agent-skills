@@ -36,6 +36,7 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-02-17 | `pr-ci-loop` | PR URL 기반 GitHub Actions CI 실패 분석/수정 커밋/푸시 + 성공까지 폴링 루프 |
 | 2026-02-15 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 |
 | 2026-02-15 | `codebase-doc-writer` | 저장소 코드를 직접 읽고 근거 기반 기술 문서 패키지 생성/갱신 |
 | 2026-02-15 | `branch-doc-sync` | 현재 브랜치 변경분을 분석해 필요한 문서를 직접 수정 |
@@ -103,6 +104,8 @@
 │   └── SKILL.md            # 계획 문서 기반 구현 + 승인 게이트 + 테스트
 ├── ship/
 │   └── SKILL.md            # 변경사항 커밋/푸시 워크플로우 자동화
+├── pr-ci-loop/
+│   └── SKILL.md            # PR URL 기반 GitHub Actions CI 실패 복구 루프
 ├── debug-loop/
 │   └── SKILL.md            # 버그 재현/가설 검증/수정 반복 루프
 ├── obsidian-cli/
