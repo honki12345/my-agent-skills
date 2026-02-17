@@ -120,7 +120,7 @@ POLL_INTERVAL_SEC=60
 
 ```bash
 HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
-HEAD_SHA=$(gh pr view "$PR_NUMBER" --json headRefOid --jq .headRefOid)
+HEAD_SHA=$(gh pr view "$PR_NUMBER" --json commits --jq '.commits[-1].oid')
 gh run list --limit 100 --json databaseId,headBranch,headSha,event,status,conclusion,name,url,createdAt --jq \
   ".[] |
    select(.headBranch == \"$HEAD_BRANCH\" and .headSha == \"$HEAD_SHA\" and .event == \"pull_request\") |
@@ -138,7 +138,7 @@ gh run list --limit 100 --json databaseId,headBranch,headSha,event,status,conclu
 
 ```bash
 HEAD_BRANCH=$(gh pr view "$PR_NUMBER" --json headRefName --jq .headRefName)
-HEAD_SHA=$(gh pr view "$PR_NUMBER" --json headRefOid --jq .headRefOid)
+HEAD_SHA=$(gh pr view "$PR_NUMBER" --json commits --jq '.commits[-1].oid')
 gh run list --limit 50 --json databaseId,headBranch,headSha,event,status,conclusion,name,url,createdAt --jq \
   ".[] | select(.headBranch == \"$HEAD_BRANCH\" and .headSha == \"$HEAD_SHA\" and .event == \"pull_request\") | [.databaseId, .name, .status, .conclusion, .url] | @tsv"
 ```
