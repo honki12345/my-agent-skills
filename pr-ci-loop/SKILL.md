@@ -130,9 +130,9 @@ gh run list -R "$REPO_NWO" --limit 200 \
 
 - 결과가 비어있으면 `sleep "$POLL_INTERVAL_SEC"` 후 재조회한다.
   - 비어있는 상태가 `MAX_EMPTY_POLLS`를 초과하면 workflow 미설정/권한 문제 가능성이 있으니 중단하고 원인을 보고한다.
-- 한 줄이라도 `QUEUED/IN_PROGRESS/WAITING` 이면 `sleep` 후 재조회한다.
-- 모든 줄이 `SUCCESS/SKIPPED` 이면 종료한다.
-- 하나라도 `FAILURE/ERROR/TIMED_OUT/CANCELLED` 가 있으면 3단계로 진행한다.
+- 한 줄이라도 `queued/in_progress/waiting` 이면 `sleep` 후 재조회한다.
+- 모든 줄이 `success/skipped/neutral` 이면 종료한다.
+- 하나라도 `failure/error/timed_out/cancelled/action_required/startup_failure` 가 있으면 3단계로 진행한다.
 
 ### 3단계: 실패 run 분석
 
