@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `pr-merge-conflict` | PR URL 기반 merge conflict 감지/원인 PR 추적 + 계획 문서 기반 충돌 해결 커밋/푸시 | `/pr-merge-conflict {pr-url}` 요청 시 | 2026-02-18 |
 | `pr-ci-loop` | PR URL 기반 GitHub Actions CI 실패 분석/수정 커밋/푸시 + 성공까지 폴링 루프 | `/pr-ci-loop {pr-url}` 요청 시 | 2026-02-17 |
 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 | `/issue-worktree-plan {issue-url}` 요청 시 | 2026-02-15 |
 | `codebase-doc-writer` | 저장소 코드를 직접 읽어 기술 문서 패키지 생성/갱신 | 프로젝트 문서화, 위키 문서화, 코드 기준 문서 갱신 요청 시 | 2026-02-15 |
@@ -217,6 +218,26 @@ Obsidian CLI 명령어를 빠르게 찾아 실행할 수 있도록 정리한 레
 ```
 ship
 ship docs/plan/ISSUE_123_feature.md
+```
+
+---
+
+## PR Merge Conflict Skill 상세
+
+PR URL을 받아 merge conflict 여부를 확인하고, 충돌이 없으면 종료합니다. 충돌이 있으면 충돌 파일을 기준으로 원인 커밋을 추적해 어떤 PR/브랜치에서 유입된 변경인지 식별한 뒤, 양쪽(이번 PR + 충돌 원인 PR/이슈)의 plans(또는 docs/plan) 문서를 찾아 의도한 구현을 모두 보존하는 형태로 충돌을 해결하고 commit+push 합니다.
+
+### 주요 내용
+
+- PR mergeable 상태(`mergeable`) 확인: 충돌 없으면 즉시 종료
+- `git merge --no-commit`로 충돌 파일 목록 수집 및 `merge-base` 기준 양쪽 커밋 후보 추적
+- `gh api .../commits/{sha}/pulls`로 충돌 원인 커밋 ↔ PR 매핑 (가능한 경우)
+- 각 PR/이슈의 `plans/` 또는 `docs/plan/` 문서 탐색 후 요구사항 병합
+- 충돌 해결 구현 후 commit/push, PR이 다시 mergeable 해질 때까지 재확인
+
+### 사용 예시
+
+```
+/pr-merge-conflict https://github.com/org/repo/pull/123
 ```
 
 ---
