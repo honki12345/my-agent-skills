@@ -36,6 +36,7 @@
 
 | 날짜 | Skill | 설명 |
 |------|-------|------|
+| 2026-02-21 | `gh-cli` | GitHub CLI(gh) 통합 레퍼런스 (repo/issue/pr/actions/projects/releases 등) |
 | 2026-02-18 | `pr-merge-conflict` | PR URL 기반 merge conflict 원인 PR/커밋 추적 + 계획 문서 기반 충돌 해결 커밋/푸시 |
 | 2026-02-17 | `pr-ci-loop` | PR URL 기반 GitHub Actions CI 실패 분석/수정 커밋/푸시 + 성공까지 폴링 루프 |
 | 2026-02-15 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 |
@@ -90,6 +91,8 @@
 │   │   └── workflows/docs-impact-pr.yml
 │   └── references/
 │       └── report-format.md
+├── gh-cli/
+│   └── SKILL.md            # GitHub CLI(gh) 통합 레퍼런스
 ├── gh-review-triage/
 │   └── SKILL.md            # PR 코멘트 순차 판정 + 반영 후 계획 문서 동기화
 ├── issue-worktree-plan/

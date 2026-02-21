@@ -6,6 +6,7 @@
 
 | Skill | 설명 | 트리거 | 생성일 |
 |-------|------|--------|--------|
+| `gh-cli` | GitHub CLI(gh) 통합 레퍼런스 (repo/issue/pr/actions/projects/releases 등) | GitHub CLI 명령어 사용/조회 작업 시 | 2026-02-21 |
 | `pr-merge-conflict` | PR URL 기반 merge conflict 감지/원인 PR 추적 + 계획 문서 기반 충돌 해결 커밋/푸시 | `/pr-merge-conflict {pr-url}` 요청 시 | 2026-02-18 |
 | `pr-ci-loop` | PR URL 기반 GitHub Actions CI 실패 분석/수정 커밋/푸시 + 성공까지 폴링 루프 | `/pr-ci-loop {pr-url}` 요청 시 | 2026-02-17 |
 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 | `/issue-worktree-plan {issue-url}` 요청 시 | 2026-02-15 |
@@ -198,6 +199,27 @@ Obsidian CLI 명령어를 빠르게 찾아 실행할 수 있도록 정리한 레
 - 플러그인/템플릿/히스토리/Sync/Publish 명령 포함
 - 볼트 타겟팅(`vault=`, `file=`, `path=`) 패턴 가이드 제공
 - TUI 모드/파라미터/플래그 사용법 포함
+
+---
+
+## GH CLI Skill 상세
+
+GitHub CLI(`gh`)를 커맨드라인에서 사용할 때 필요한 명령 체계를 폭넓게 참조하는 레퍼런스 스킬입니다.
+
+### 주요 내용
+
+- `repo`/`issue`/`pr`/`run`/`workflow`/`project`/`release`/`gist`/`codespace`/`org` 명령군 정리
+- `gh auth` 기반 인증/계정 전환/토큰/권한 스코프 관리 절차 포함
+- `gh config` 및 주요 환경변수(`GH_TOKEN`, `GH_HOST`, `GH_REPO` 등) 사용 패턴 제공
+- `gh api`, `search`, `extension` 등 고급 명령과 자동화 활용 시나리오 커버
+
+### 사용 예시
+
+```bash
+/gh-cli
+gh pr list
+gh run view --log-failed
+```
 
 ---
 
