@@ -40,7 +40,7 @@
 | 2026-02-17 | `pr-ci-loop` | PR URL 기반 GitHub Actions CI 실패 분석/수정 커밋/푸시 + 성공까지 폴링 루프 |
 | 2026-02-15 | `issue-worktree-plan` | 이슈 URL 기반으로 git worktree 브랜치 생성 + 계획 문서 생성 |
 | 2026-02-15 | `codebase-doc-writer` | 저장소 코드를 직접 읽고 근거 기반 기술 문서 패키지 생성/갱신 |
-| 2026-02-15 | `branch-doc-sync` | 현재 브랜치 변경분을 분석해 필요한 문서를 직접 수정 |
+| 2026-02-15 | `branch-doc-sync` | 현재 브랜치 변경분 기준 관리 문서 전수 점검 + 문서별 영향 판정 후 필요한 문서 직접 수정 |
 | 2026-02-15 | `gh-review-triage` | PR 코멘트별 초안 판정 + 수동 텍스트 승인 루프 순차 확정 + 반영 후 계획 문서 동기화 |
 | 2026-02-14 | `debug-loop` | 버그 재현 우선 + git/문서 기반 가설 검증 + 수정/로깅 반복 루프 + 최종 문서 업데이트 점검 |
 | 2026-02-14 | `implement-plan` | 계획 문서 기반 구현 + 이탈 시 승인 게이트 + 테스트 통과 시도 |
@@ -81,7 +81,7 @@
 │   └── references/
 │       └── doc-pack-template.md
 ├── branch-doc-sync/
-│   ├── SKILL.md            # 브랜치 변경분 기준 문서 영향 분석 + 문서 직접 수정
+│   ├── SKILL.md            # 브랜치 변경분 기준 관리 문서 전수 점검 + 영향 판정 + 문서 직접 수정
 │   ├── scripts/
 │   │   ├── generate_doc_impact_report.py
 │   │   └── requirements.txt

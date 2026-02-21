@@ -22,12 +22,23 @@ import yaml
 
 DEFAULT_MAP_PATH = Path(".github/docs-impact-map.yml")
 DEFAULT_OUTPUT_DIR = Path("docs/impact-reports")
+DEFAULT_DOC_EXTENSIONS = (".md", ".mdx", ".rst", ".adoc")
+DEFAULT_DOC_PATH_PATTERNS = ("docs/**", "doc/**", "runbooks/**")
+DEFAULT_DOC_EXCLUDE_PATTERNS = (".github/**",)
 
 
 @dataclass
 class ChangedFile:
     path: str
     status: str
+
+
+@dataclass
+class DocReviewDecision:
+    path: str
+    decision: str
+    reasons: list[str]
+    sources: list[str]
 
 
 def run_git(*args: str) -> str:
@@ -85,6 +96,66 @@ def get_changed_files(base: str, head: str) -> list[ChangedFile]:
         files.append(ChangedFile(path=path, status=status))
 
     return files
+
+
+def get_tracked_files() -> list[str]:
+    output = run_git("ls-files")
+    if not output:
+        return []
+    return [line.strip() for line in output.splitlines() if line.strip()]
+
+
+def get_document_inventory(
+    tracked_files: list[str], heuristics: dict[str, Any]
+) -> list[str]:
+    configured_exts = heuristics.get("doc_extensions")
+    if isinstance(configured_exts, list) and configured_exts:
+        doc_extensions = tuple(
+            ext if ext.startswith(".") else f".{ext}"
+            for ext in configured_exts
+            if isinstance(ext, str) and ext.strip()
+        )
+    else:
+        doc_extensions = DEFAULT_DOC_EXTENSIONS
+
+    configured_patterns = heuristics.get("doc_path_patterns")
+    if isinstance(configured_patterns, list) and configured_patterns:
+        doc_path_patterns = tuple(
+            pattern for pattern in configured_patterns if isinstance(pattern, str) and pattern.strip()
+        )
+    else:
+        doc_path_patterns = DEFAULT_DOC_PATH_PATTERNS
+
+    configured_excludes = heuristics.get("doc_exclude_patterns")
+    if isinstance(configured_excludes, list) and configured_excludes:
+        doc_exclude_patterns = tuple(
+            pattern for pattern in configured_excludes if isinstance(pattern, str) and pattern.strip()
+        )
+    else:
+        doc_exclude_patterns = DEFAULT_DOC_EXCLUDE_PATTERNS
+
+    configured_include = heuristics.get("doc_include_files")
+    doc_include_files: set[str] = set()
+    if isinstance(configured_include, list):
+        doc_include_files = {
+            path for path in configured_include if isinstance(path, str) and path.strip()
+        }
+
+    inventory: list[str] = []
+    for path in tracked_files:
+        lower = path.lower()
+        matched = lower.endswith(doc_extensions) or any(
+            path_matches(path, pattern) for pattern in doc_path_patterns
+        )
+        if not matched and path in doc_include_files:
+            matched = True
+        if not matched:
+            continue
+        if any(path_matches(path, pattern) for pattern in doc_exclude_patterns):
+            continue
+        inventory.append(path)
+
+    return sorted(set(inventory))
 
 
 def apply_mapping_rules(
@@ -167,11 +238,59 @@ def dedupe_in_place(values: dict[str, list[str]]) -> None:
         values[key] = deduped
 
 
+def build_doc_review_decisions(
+    doc_inventory: list[str],
+    impacted_docs: dict[str, list[str]],
+    doc_to_sources: dict[str, list[str]],
+) -> tuple[list[DocReviewDecision], list[DocReviewDecision]]:
+    decisions: list[DocReviewDecision] = []
+    inventory_set = set(doc_inventory)
+
+    for doc_path in doc_inventory:
+        reasons = impacted_docs.get(doc_path, [])
+        sources = doc_to_sources.get(doc_path, [])
+        if reasons:
+            decision = "update"
+            final_reasons = reasons
+            final_sources = sources
+        else:
+            decision = "no-change"
+            final_reasons = ["No matching rule/heuristic for current branch diff"]
+            final_sources = []
+
+        decisions.append(
+            DocReviewDecision(
+                path=doc_path,
+                decision=decision,
+                reasons=final_reasons,
+                sources=final_sources,
+            )
+        )
+
+    missing_candidates: list[DocReviewDecision] = []
+    for doc_path in sorted(impacted_docs.keys()):
+        if doc_path in inventory_set:
+            continue
+        missing_candidates.append(
+            DocReviewDecision(
+                path=doc_path,
+                decision="add",
+                reasons=impacted_docs.get(doc_path, []),
+                sources=doc_to_sources.get(doc_path, []),
+            )
+        )
+
+    return decisions, missing_candidates
+
+
 def render_report(
     base: str,
     head: str,
     branch: str,
     files: list[ChangedFile],
+    doc_inventory: list[str],
+    decisions: list[DocReviewDecision],
+    missing_candidates: list[DocReviewDecision],
     impacted_docs: dict[str, list[str]],
     doc_to_sources: dict[str, list[str]],
 ) -> str:
@@ -182,6 +301,13 @@ def render_report(
     lines.append("")
     lines.append(f"Generated at: `{now}`")
     lines.append(f"Diff range: `{base}...{head}`")
+    lines.append(f"Managed docs reviewed: `{len(doc_inventory)}`")
+    lines.append(
+        "Decision counts: "
+        f"`update={sum(1 for d in decisions if d.decision == 'update')}`, "
+        f"`no-change={sum(1 for d in decisions if d.decision == 'no-change')}`, "
+        f"`add={len(missing_candidates)}`"
+    )
     lines.append("")
 
     lines.append("## Changed Files")
@@ -190,6 +316,33 @@ def render_report(
     lines.append("|---|---|")
     for f in files:
         lines.append(f"| `{f.status}` | `{f.path}` |")
+    lines.append("")
+
+    lines.append("## Managed Documentation Inventory")
+    lines.append("")
+    lines.append("| Doc Path | Decision | Why | Matched Source Files |")
+    lines.append("|---|---|---|---|")
+    for decision in decisions:
+        reasons = "; ".join(decision.reasons)
+        sources = ", ".join(f"`{p}`" for p in decision.sources)
+        lines.append(
+            f"| `{decision.path}` | `{decision.decision}` | {reasons} | {sources if sources else '-'} |"
+        )
+    lines.append("")
+
+    lines.append("## Missing Documentation Candidates")
+    lines.append("")
+    if not missing_candidates:
+        lines.append("- None")
+    else:
+        lines.append("| Doc Path | Decision | Why | Matched Source Files |")
+        lines.append("|---|---|---|---|")
+        for decision in missing_candidates:
+            reasons = "; ".join(decision.reasons)
+            sources = ", ".join(f"`{p}`" for p in decision.sources)
+            lines.append(
+                f"| `{decision.path}` | `{decision.decision}` | {reasons} | {sources if sources else '-'} |"
+            )
     lines.append("")
 
     lines.append("## Documentation Impact Candidates")
@@ -204,8 +357,11 @@ def render_report(
 
     lines.append("## Update Checklist")
     lines.append("")
-    for doc_path in sorted(impacted_docs.keys()):
+    for doc_path in sorted(d.path for d in decisions if d.decision == "update"):
         lines.append(f"- [ ] Update `{doc_path}`")
+    for decision in missing_candidates:
+        lines.append(f"- [ ] Add `{decision.path}`")
+    lines.append("- [ ] Review all managed docs and confirm `no-change` decisions are valid")
     lines.append("- [ ] Validate commands and configuration snippets")
     lines.append("- [ ] Verify links and file-path references")
     lines.append("")
@@ -240,6 +396,7 @@ def main() -> int:
             branch = run_git("rev-parse", "--abbrev-ref", "HEAD")
             files = get_changed_files(args.base, args.head)
             mapping = load_mapping(Path(args.map_path))
+            tracked_files = get_tracked_files()
         finally:
             os.chdir(previous)
     except RuntimeError as exc:
@@ -254,12 +411,21 @@ def main() -> int:
     apply_heuristics(files, impacted_docs, doc_to_sources, mapping.get("heuristics", {}))
     dedupe_in_place(impacted_docs)
     dedupe_in_place(doc_to_sources)
+    doc_inventory = get_document_inventory(tracked_files, mapping.get("heuristics", {}))
+    decisions, missing_candidates = build_doc_review_decisions(
+        doc_inventory=doc_inventory,
+        impacted_docs=impacted_docs,
+        doc_to_sources=doc_to_sources,
+    )
 
     report = render_report(
         base=args.base,
         head=args.head,
         branch=branch,
         files=files,
+        doc_inventory=doc_inventory,
+        decisions=decisions,
+        missing_candidates=missing_candidates,
         impacted_docs=impacted_docs,
         doc_to_sources=doc_to_sources,
     )

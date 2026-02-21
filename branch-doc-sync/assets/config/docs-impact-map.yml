@@ -66,3 +66,15 @@ rules:
 heuristics:
   include_markdown_changes: true
   include_readme_by_default: true
+  doc_extensions:
+    - ".md"
+    - ".mdx"
+    - ".rst"
+    - ".adoc"
+  doc_path_patterns:
+    - "docs/**"
+    - "doc/**"
+    - "runbooks/**"
+  doc_exclude_patterns:
+    - ".github/**"
+  doc_include_files: []

@@ -1,12 +1,12 @@
 ---
 name: branch-doc-sync
-description: Analyze current branch changes against a base branch, identify documentation that should be updated, and directly edit those docs. Use when asked to sync docs with branch changes before merge, release, or PR review.
+description: Analyze current branch changes against a base branch, build a full inventory of managed docs, review each doc for impact, and directly edit all required docs. Use when asked to sync docs with branch changes before merge, release, or PR review.
 ---
 
 # Branch Doc Sync
 
 ## Goal
-Keep documentation aligned with implementation changes in the current working branch.
+Keep documentation aligned with implementation changes in the current working branch by reviewing all managed docs one by one.
 
 ## Skill Resources
 - Mapping template: `assets/config/docs-impact-map.yml`
@@ -16,7 +16,7 @@ Keep documentation aligned with implementation changes in the current working br
 ## Inputs
 - Base branch (default: `origin/main`; fallback: `main`)
 - Scope (`all changed files` or selected paths)
-- Documentation targets (`README`, `docs/**`, module docs, runbooks)
+- Managed-doc definition (`doc_extensions`, `doc_path_patterns`, include/exclude patterns)
 - Language and style requirements
 
 ## Workflow
@@ -24,25 +24,34 @@ Keep documentation aligned with implementation changes in the current working br
 - Run `git diff --name-status <base>...HEAD` to capture changed files.
 - Group changes by feature area (API, frontend, config, CI/CD, tests, deployment).
 
-2. Map code changes to doc targets.
+2. Build full managed-doc inventory.
+- Run `git ls-files` and enumerate all tracked docs using extension/path rules.
+- Default doc rules: `.md`, `.mdx`, `.rst`, `.adoc`, plus `docs/**`/`doc/**`/`runbooks/**`.
+- Allow project-specific overrides in mapping heuristics.
+
+3. Map code changes to doc targets.
 - Prefer explicit mapping file when present (for example `.github/docs-impact-map.yml`).
 - If mapping is absent, derive by path heuristics and ownership.
 
-3. Decide update actions.
-- `update`: existing doc section is stale.
-- `add`: missing section is required by new behavior.
-- `no-change`: change is internal and docs remain valid.
+4. Perform exhaustive doc-by-doc review.
+- For every managed doc in inventory, assign exactly one decision:
+  - `update`: existing content is stale or incomplete.
+  - `no-change`: still accurate for current diff.
+- For mapped docs that do not exist in inventory, mark `add`.
+- Do not skip docs; if inventory is large, review in batches and preserve full coverage.
 
-4. Generate an impact summary.
-- Use `scripts/generate_doc_impact_report.py` when a quick deterministic report is needed.
+5. Generate an impact summary.
+- Use `scripts/generate_doc_impact_report.py` for deterministic inventory + decision matrix output.
 - Follow `references/report-format.md` for final summary structure.
 
-5. Edit docs directly.
+6. Edit docs directly.
+- Read each `update`/`add` target doc before editing.
 - Update affected docs in place with concrete behavior/config/command changes.
 - Keep headings stable and preserve existing document style.
 - Add short evidence notes (`Sources`) where appropriate.
 
-6. Validate doc quality.
+7. Validate doc quality.
+- Confirm every managed doc has a review decision in the matrix.
 - Verify commands, env vars, file paths, and links.
 - Ensure no claims contradict code/config.
 - Summarize what was changed and why.
@@ -51,6 +60,7 @@ Keep documentation aligned with implementation changes in the current working br
 - Do not edit product code unless explicitly requested.
 - Do not invent undocumented behavior.
 - Prefer minimal, targeted edits over broad rewrites.
+- Do not mark `no-change` without a concrete reason tied to current diff.
 - If evidence is insufficient, mark TODO/assumption explicitly.
 
 ## References
