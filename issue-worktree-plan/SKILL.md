@@ -23,6 +23,7 @@ GitHub 이슈를 기준으로 작업 준비를 자동화하는 작업형 스킬�
 4. 브랜치 네이밍 컨벤션 우선
 - 프로젝트에 브랜치 생성 규칙이 명시되어 있으면 해당 규칙을 우선 적용한다.
 - 명시 규칙이 없을 때만 이 스킬의 기본 브랜치 패턴을 사용한다.
+- 브랜치명에는 `#` 문자를 절대 포함하지 않는다.
 
 ## 사용법
 
@@ -77,10 +78,11 @@ DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remote
 2. 이슈 제목을 slug로 정규화한다.
 - branch slug: kebab-case (`-`)
 - 문서 slug: snake_case (`_`)
-3. 브랜치명을 만든다.
+3. slug와 최종 브랜치명에서 `#`가 포함되지 않도록 검증하고 제거한다.
+4. 브랜치명을 만든다.
 - 프로젝트 규칙이 있으면 그 포맷으로 생성한다.
 - `issue-{number}-{branch-slug}`
-4. 워크트리 경로를 만든다.
+5. 워크트리 경로를 만든다.
 - `${REPO_ROOT}/.worktrees/{branch-name}`
 
 ### 5단계: git worktree 생성
@@ -165,3 +167,4 @@ git worktree add "$WORKTREE_PATH" "$BRANCH_NAME"
 - 기존 worktree 디렉토리를 무단 삭제/덮어쓰기
 - 사용자 확인 없이 기존 계획 문서 덮어쓰기
 - 이슈와 무관한 브랜치명/문서명 생성
+- `#`가 포함된 브랜치명 생성
