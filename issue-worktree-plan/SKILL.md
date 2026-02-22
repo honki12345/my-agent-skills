@@ -20,6 +20,10 @@ GitHub 이슈를 기준으로 작업 준비를 자동화하는 작업형 스킬�
 3. 문서 일관성 유지
 - 계획 문서는 항상 `docs/plan/ISSUE_{번호}_{slug}.md` 형식으로 생성한다.
 
+4. 브랜치 네이밍 컨벤션 우선
+- 프로젝트에 브랜치 생성 규칙이 명시되어 있으면 해당 규칙을 우선 적용한다.
+- 명시 규칙이 없을 때만 이 스킬의 기본 브랜치 패턴을 사용한다.
+
 ## 사용법
 
 - 호출 예시: `/issue-worktree-plan https://github.com/org/repo/issues/123`
@@ -66,12 +70,17 @@ DEFAULT_BRANCH=$(git symbolic-ref refs/remotes/origin/HEAD | sed 's@^refs/remote
 
 ### 4단계: 브랜치명/워크트리 경로 결정
 
-1. 이슈 제목을 slug로 정규화한다.
+1. 프로젝트의 브랜치 네이밍 규칙을 먼저 확인한다.
+- 우선 확인: `AGENTS.md`, `README.md`, `CONTRIBUTING.md`, `docs/` 내 브랜치 규칙 문서
+- 명시된 규칙이 있으면 그 규칙을 우선 적용한다.
+- 규칙이 모호하거나 충돌하면 브랜치 생성 전 사용자에게 확인한다.
+2. 이슈 제목을 slug로 정규화한다.
 - branch slug: kebab-case (`-`)
 - 문서 slug: snake_case (`_`)
-2. 브랜치명을 만든다.
+3. 브랜치명을 만든다.
+- 프로젝트 규칙이 있으면 그 포맷으로 생성한다.
 - `issue-{number}-{branch-slug}`
-3. 워크트리 경로를 만든다.
+4. 워크트리 경로를 만든다.
 - `${REPO_ROOT}/.worktrees/{branch-name}`
 
 ### 5단계: git worktree 생성

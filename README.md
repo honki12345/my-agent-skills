@@ -39,6 +39,7 @@ GitHub 이슈 URL 하나로 작업용 worktree 브랜치와 계획 문서를 동
 ### 주요 내용
 
 - GitHub issue URL 파싱 및 이슈 메타데이터(`gh issue view`) 확인
+- 프로젝트에 브랜치 네이밍 컨벤션이 있으면 우선 준수하고, 없으면 기본 패턴(`issue-{번호}-{slug}`) 사용
 - 기본 브랜치 기준 `git worktree add`로 분리 작업 디렉토리 생성
 - `docs/plan/ISSUE_{번호}_{slug}.md` 규칙으로 계획 문서 생성
 - 브랜치/워크트리/문서 충돌 시 덮어쓰기 없이 사용자 확인 게이트 적용
